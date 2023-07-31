@@ -1,0 +1,50 @@
+/* font family example */
+@font-face {
+    font-family: --f1;
+    src: url("../fonts/NerkoOne-Regular.ttf");
+}
+/* font color example */
+:root {
+    --c1: #6495ed;
+    --c2: #faf0e6;
+    --c3: #0d9f40;
+    --c4: #fea347;
+    --c5: #179ccd;
+    --c6: #e914a9;
+    --c7: #ed1111;
+    --c8: #02f1cd;
+    --c9: #660ac7;
+}
+.image-1-1{
+    aspect-ratio: 1/1;
+}
+.image-1-2{
+    aspect-ratio: 1/2;
+}
+.image-2-1{
+    aspect-ratio: 2/1;
+}
+.image-9-16{
+    aspect-ratio: 9/16;
+}
+.image-16-9{
+    aspect-ratio: 16/9;
+}
+.width-full{
+    width: 100%;
+}
+.height-full{
+    height: 100%;
+}
+.image-cover{
+    object-fit: cover;
+}
+.image-contain{
+    object-fit: contain;
+}
+.image-fill{
+    object-fit: fill;
+}
+.image-none{
+    object-fit: none;
+}
