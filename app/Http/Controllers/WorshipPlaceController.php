@@ -14,7 +14,9 @@ class WorshipPlaceController extends Controller
      */
     public function index()
     {
-        //
+        $rows = WorshipPlace::get();
+
+        return view('page.place.index', compact('rows'));
     }
 
     /**
@@ -24,7 +26,7 @@ class WorshipPlaceController extends Controller
      */
     public function create()
     {
-        //
+
     }
 
     /**
@@ -35,6 +37,22 @@ class WorshipPlaceController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'time_start' => ['required', 'date_format:H:i'],
+            'time_end' => ['required', 'date_format:H:i'],
+            'status' => ['required', 'string']
+        ]);
+        WorshipPlace::create([
+            'name' => $request->name,
+            'time_start' => $request->time_start,
+            'time_end' => $request->time_end,
+            'status' =>  $request->status,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        return redirect('/worship-place');
+
         //
     }
 
@@ -67,9 +85,27 @@ class WorshipPlaceController extends Controller
      * @param  \App\Models\WorshipPlace  $worshipPlace
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, WorshipPlace $worshipPlace)
+    public function update(Request $request, $id)
     {
-        //
+        session()->flash('is', $id);
+        // dd($id);
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'time_start' => ['required', 'date_format:H:i'],
+            'time_end' => ['required', 'date_format:H:i'],
+            'status' => ['required', 'string']
+        ]);
+        WorshipPlace::updateOrCreate([
+            'id' => $id,
+        ],[
+            'name' => $request->name,
+            'time_start' => $request->time_start,
+            'time_end' => $request->time_end,
+            'status' =>  $request->status,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        return redirect('/worship-place');
     }
 
     /**

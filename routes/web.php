@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\WorshipPlaceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,4 +15,6 @@ use App\Http\Controllers\PageController;
 |
 */
 
-Route::get('/', [PageController::class, 'master']);
+Route::get('/', [PageController::class, 'index']);
+
+Route::resource('/worship-place', WorshipPlaceController::class);

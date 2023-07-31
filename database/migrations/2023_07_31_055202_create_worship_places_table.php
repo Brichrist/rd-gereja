@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->timeTz('time_start', $precision = 0);
             $table->timeTz('time_end', $precision = 0)->nullable();
+            $table->enum("status",['1','0'])->comment('active:1,inactive:0')->default('1');
             $table->timestamps();
         });
     }

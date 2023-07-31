@@ -18,9 +18,6 @@ return new class extends Migration
             $table->integer('order');
             $table->bigInteger('id_worship');
             $table->bigInteger('id_activity_template');
-            $table->longText('value')->nullable();
-            $table->enum("done",['-1','1'])->comment('before:-1,after:1')->default('1');
-            $table->enum("type",['1','0'])->comment('spc:1,normal:0')->default('0');
             $table->dateTime('time_start', $precision = 0);
             $table->dateTime('time_end', $precision = 0)->nullable();
 

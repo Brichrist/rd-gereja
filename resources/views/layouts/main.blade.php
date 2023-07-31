@@ -13,11 +13,12 @@
 </head>
 <body>
 
-    @include('components.header.v1')
+    @include('layouts.header')
 
-    @yield('content')
+    <div class="mt-5">
+        @yield('main')
+    </div>
 
-    @include('components.footer.v1')
 
 
     <script src="{{ mix('js/bootstrap.js') }}"></script>
