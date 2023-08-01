@@ -16,10 +16,12 @@ return new class extends Migration
         Schema::create('parameter_activity_worships', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('id_activity_worship');
+                
             $table->string('parameter_key');
             $table->enum("parameter_type",['2','1'])->comment('textarea:2,input:1')->default('1');
             $table->boolean('parameter_required')->default(false);
             $table->longText('parameter_value')->nullable();
+            
             $table->timestamps();
         });
     }

@@ -15,8 +15,6 @@ return new class extends Migration
     {
         Schema::create('activity_templates', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('id_worship_template');
-            $table->integer('order');
             $table->string('activity');
             $table->longText('value')->nullable();
             $table->integer('default_time')->nullable();

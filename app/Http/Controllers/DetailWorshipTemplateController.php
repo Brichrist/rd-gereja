@@ -2,18 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\WorshipTemplate;
+use App\Models\DetailWorshipTemplate;
+use App\Models\ActivityTemplate;
+use App\Models\WorshipPlace;
+
 use Illuminate\Http\Request;
 
-class WorshipTemplateController extends Controller
+class DetailWorshipTemplateController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id)
     {
+        $WorshipPlace=WorshipPlace::where('id',$id)->first();
+        $DetailWorshipTemplates=DetailWorshipTemplate::where('id_worship_template',$id)->get();
+        $ActivityTemplates=ActivityTemplate::get();
+
+        return view('page.place.detail_index',compact('DetailWorshipTemplates','WorshipPlace','ActivityTemplates'));
         //
     }
 
@@ -41,10 +49,10 @@ class WorshipTemplateController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\WorshipTemplate  $worshipTemplate
+     * @param  \App\Models\DetailWorshipTemplate  $detailWorshipTemplate
      * @return \Illuminate\Http\Response
      */
-    public function show(WorshipTemplate $worshipTemplate)
+    public function show(DetailWorshipTemplate $detailWorshipTemplate)
     {
         //
     }
@@ -52,10 +60,10 @@ class WorshipTemplateController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\WorshipTemplate  $worshipTemplate
+     * @param  \App\Models\DetailWorshipTemplate  $detailWorshipTemplate
      * @return \Illuminate\Http\Response
      */
-    public function edit(WorshipTemplate $worshipTemplate)
+    public function edit(DetailWorshipTemplate $detailWorshipTemplate)
     {
         //
     }
@@ -64,10 +72,10 @@ class WorshipTemplateController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\WorshipTemplate  $worshipTemplate
+     * @param  \App\Models\DetailWorshipTemplate  $detailWorshipTemplate
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, WorshipTemplate $worshipTemplate)
+    public function update(Request $request, DetailWorshipTemplate $detailWorshipTemplate)
     {
         //
     }
@@ -75,10 +83,10 @@ class WorshipTemplateController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\WorshipTemplate  $worshipTemplate
+     * @param  \App\Models\DetailWorshipTemplate  $detailWorshipTemplate
      * @return \Illuminate\Http\Response
      */
-    public function destroy(WorshipTemplate $worshipTemplate)
+    public function destroy(DetailWorshipTemplate $detailWorshipTemplate)
     {
         //
     }

@@ -11,7 +11,7 @@
             var time_end = $(this).attr(`data-time_end`);
             var status = $(this).attr(`data-status`);
 
-            $('.add-edit-title').text('Edit');
+            $('.add-edit-title').text('Update');
             $('input#name').val(name);
             $('input#time_start').val(time_start);
             $('input#time_end').val(time_end);
@@ -41,7 +41,7 @@
                             Create
                         @endif
                     </h4>
-                    <form method="post" action="/worship-place/{{session()->pull('id') ?? null}}">
+                    <form method="post" action="/worship-place/{{ session()->pull('id') ?? null }}">
                         @if (session()->pull('id') ?? null)
                             <input type="hidden" name="_method" value="put">
                         @endif
@@ -49,7 +49,7 @@
                         <div class="row">
                             <div class="mb-3 col-12">
                                 <label for="name" class="form-label">nama tempat</label>
-                                <input type="text" name="name" value="{{old('name', null) }}" class="form-control @error('name') is-invalid @enderror" id="name">
+                                <input type="text" name="name" value="{{ old('name', null) }}" class="form-control @error('name') is-invalid @enderror" id="name">
                                 @error('name')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -107,10 +107,11 @@
                                 <tr>
                                     <th scope="row">{{ $loop->iteration }}</th>
                                     <td>{{ $row->name }}</td>
-                                    <td>{{ date('H:i',strtotime($row->time_start)) . ($row->time_end ?? null ? ' - ' . date('H:i',strtotime($row->time_end)) : '') }}</td>
+                                    <td>{{ date('H:i', strtotime($row->time_start)) . ($row->time_end ?? null ? ' - ' . date('H:i', strtotime($row->time_end)) : '') }}</td>
                                     <td>{{ $row->status == '1' ? 'aktif' : 'tidak aktif' }}</td>
                                     <td>
-                                        <button data-name="{{ $row->name }}" data-id="{{ $row->id }}" data-status="{{ $row->status }}" data-time_start="{{ date('H:i',strtotime($row->time_start)) ?? null }}" data-time_end="{{ date('H:i',strtotime($row->time_end)) ?? null }}" class="btn btn-primary btn-edit">Edit</button>
+                                        <button data-name="{{ $row->name }}" data-id="{{ $row->id }}" data-status="{{ $row->status }}" data-time_start="{{ date('H:i', strtotime($row->time_start)) ?? null }}" data-time_end="{{ date('H:i', strtotime($row->time_end)) ?? null }}" class="btn btn-primary btn-edit">Edit</button>
+                                        <a href="/worship-place/{{ $row->id }}/activity" class="btn btn-success">Activity</a>
                                     </td>
                                 </tr>
                             @endforeach

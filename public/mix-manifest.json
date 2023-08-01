@@ -1,7 +1,7 @@
 {
     "/js/bootstrap.js": "/js/bootstrap.js",
-    "/css/app.css": "/css/app.css",
     "/css/bootstrap.css": "/css/bootstrap.css",
+    "/css/app.css": "/css/app.css",
     "/fonts/NerkoOne-Regular.ttf": "/fonts/NerkoOne-Regular.ttf",
     "/fonts/vendor/bootstrap-icons/bootstrap-icons.woff": "/fonts/vendor/bootstrap-icons/bootstrap-icons.woff",
     "/fonts/vendor/bootstrap-icons/bootstrap-icons.woff2": "/fonts/vendor/bootstrap-icons/bootstrap-icons.woff2"

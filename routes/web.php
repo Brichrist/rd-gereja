@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\WorshipPlaceController;
+use App\Http\Controllers\ActivityTemplateController;
+use App\Http\Controllers\ParameterActivityTemplateController;
+use App\Http\Controllers\DetailWorshipTemplateController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,3 +21,7 @@ use App\Http\Controllers\WorshipPlaceController;
 Route::get('/', [PageController::class, 'index']);
 
 Route::resource('/worship-place', WorshipPlaceController::class);
+Route::resource('/worship-place/{id_worship_place}/activity', DetailWorshipTemplateController::class);
+Route::resource('/activity-template', ActivityTemplateController::class);
+Route::resource('/activity-template/{id_activity_template}/parameter', ParameterActivityTemplateController::class);
+

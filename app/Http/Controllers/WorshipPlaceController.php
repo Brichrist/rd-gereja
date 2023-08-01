@@ -102,7 +102,6 @@ class WorshipPlaceController extends Controller
             'time_start' => $request->time_start,
             'time_end' => $request->time_end,
             'status' =>  $request->status,
-            'created_at' => now(),
             'updated_at' => now(),
         ]);
         return redirect('/worship-place');

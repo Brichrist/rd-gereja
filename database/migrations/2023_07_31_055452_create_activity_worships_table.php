@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->integer('order');
             $table->bigInteger('id_worship');
+            $table->integer('duration_time')->nullable();
+            $table->string('note')->nullable();
             $table->bigInteger('id_activity_template');
             $table->dateTime('time_start', $precision = 0);
             $table->dateTime('time_end', $precision = 0)->nullable();

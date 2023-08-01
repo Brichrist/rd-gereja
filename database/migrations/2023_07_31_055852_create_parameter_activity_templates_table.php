@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('parameter_key');
             $table->enum("parameter_type",['2','1'])->comment('textarea:2,input:1')->default('1');
             $table->boolean('parameter_required')->default(false);
-            $table->longText('parameter_value')->nullable();
+            $table->longText('default_value')->nullable();
             
             $table->timestamps();
         });

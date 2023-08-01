@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('worship_templates', function (Blueprint $table) {
+        Schema::create('detail_worship_templates', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('id_worship_place');
-            $table->string('name');
-            $table->timeTz('time_start', $precision = 0);
-            $table->timeTz('time_end', $precision = 0)->nullable();
+
+            $table->integer('order');
+            $table->bigInteger('id_worship_template');
+            $table->bigInteger('id_activity_template');
+            $table->integer('default_time')->nullable();
+
             $table->timestamps();
         });
     }
@@ -30,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('worship_templates');
+        Schema::dropIfExists('detail_worship_templates');
     }
 };

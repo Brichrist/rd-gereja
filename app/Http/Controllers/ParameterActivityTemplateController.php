@@ -12,9 +12,10 @@ class ParameterActivityTemplateController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id)
     {
-        //
+        $rows=ParameterActivityTemplate::where('id_activity_template',$id)->get();
+        return view('page.template.detail_index', compact('rows'));
     }
 
     /**
@@ -33,9 +34,9 @@ class ParameterActivityTemplateController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request,$id)
     {
-        //
+        return redirect('/activity-template/'.$id.'/parameter');
     }
 
     /**
@@ -67,9 +68,19 @@ class ParameterActivityTemplateController extends Controller
      * @param  \App\Models\ParameterActivityTemplate  $parameterActivityTemplate
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, ParameterActivityTemplate $parameterActivityTemplate)
+    public function update(Request $request, $id,$param_id)
     {
-        //
+        $request->validate([
+            'parameter_type' => ['required', 'string'],
+            'default_value' => ['required', 'string'],
+        ]);
+        ParameterActivityTemplate::updateOrCreate(['id' => $param_id],[
+            'parameter_type' =>  $request->parameter_type,
+            'default_value' => $request->default_value,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        return redirect('/activity-template/'.$id.'/parameter');
     }
 
     /**

@@ -1,7 +1,12 @@
 import _ from 'lodash';
 import 'bootstrap';
+import Trix from "trix";
+import Sortable from 'sortablejs';
+import moment from 'moment';
 window._ = _;
 window.$ = window.jQuery = require('jquery')
+window.Sortable = Sortable;
+window.moment = moment;
 
 
 /**

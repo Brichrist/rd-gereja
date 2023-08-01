@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActivityTemplate;
+use App\Models\ParameterActivityTemplate;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
 class ActivityTemplateController extends Controller
@@ -14,7 +16,9 @@ class ActivityTemplateController extends Controller
      */
     public function index()
     {
-        //
+        $rows = ActivityTemplate::with(['linkParameterActivityTemplate'])->get();
+
+        return view('page.template.index', compact('rows'));
     }
 
     /**
@@ -35,7 +39,40 @@ class ActivityTemplateController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'activity' => ['required', 'string', 'max:255'],
+            'value' => ['required', 'string'],
+            'default_time' => ['nullable', 'numeric'],
+            'done' => ['required', 'string'],
+            'type' => ['required', 'string'],
+            'status' => ['required', 'string'],
+        ]);
+        $data=ActivityTemplate::create([
+            'activity' => $request->activity,
+            'value' => $request->value,
+            'default_time' => $request->default_time,
+            'done' =>  $request->done,
+            'type' =>  $request->type,
+            'status' =>  $request->status,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        
+        $keys=[];
+        foreach (explode("{", $request->value) as $key) {
+            if (str_contains($key,"}")) {
+                $keys[]=explode("}", $key)[0];
+            }
+        }
+        foreach ($keys as $key ) {
+            ParameterActivityTemplate::create([
+                'id_activity_template' =>  $data->id,
+                'parameter_key' => $key,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+        return redirect('/activity-template');
     }
 
     /**
@@ -67,9 +104,47 @@ class ActivityTemplateController extends Controller
      * @param  \App\Models\ActivityTemplate  $activityTemplate
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, ActivityTemplate $activityTemplate)
+    public function update(Request $request, $id)
     {
-        //
+        session()->flash('is', $id);
+        // dd($id);
+        $request->validate([
+            'activity' => ['required', 'string', 'max:255'],
+            'value' => ['required', 'string'],
+            'default_time' => ['nullable', 'numeric'],
+            'done' => ['required', 'string'],
+            'type' => ['required', 'string'],
+            'status' => ['required', 'string'],
+        ]);
+        ActivityTemplate::updateOrCreate([
+            'id' => $id,
+        ],[
+            'activity' => $request->activity,
+            'value' => $request->value,
+            'default_time' => $request->default_time,
+            'done' =>  $request->done,
+            'type' =>  $request->type,
+            'status' =>  $request->status,
+            'updated_at' => now(),
+        ]);
+        ParameterActivityTemplate::where('id_activity_template',$id)->delete();
+        
+        $keys=[];
+        foreach (explode("{", $request->value) as $key) {
+            if (str_contains($key,"}")) {
+                $keys[]=explode("}", $key)[0];
+            }
+        }
+        foreach ($keys as $key ) {
+            ParameterActivityTemplate::create([
+                'id_activity_template' =>  $id,
+                'parameter_key' => $key,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        return redirect('/activity-template');
     }
 
     /**
