@@ -7,6 +7,7 @@ window._ = _;
 window.$ = window.jQuery = require('jquery')
 window.Sortable = Sortable;
 window.moment = moment;
+window.getDataset = require("get-dataset");
 
 
 /**

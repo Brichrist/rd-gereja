@@ -18,10 +18,10 @@ class DetailWorshipTemplateController extends Controller
     public function index($id)
     {
         $WorshipPlace=WorshipPlace::where('id',$id)->first();
-        $DetailWorshipTemplates=DetailWorshipTemplate::where('id_worship_template',$id)->get();
-        $ActivityTemplates=ActivityTemplate::get();
-
-        return view('page.place.detail_index',compact('DetailWorshipTemplates','WorshipPlace','ActivityTemplates'));
+        $DetailWorshipTemplates=DetailWorshipTemplate::where('id_worship_template',$id)->with(['linkActivityTemplate'])->get();
+        $arr=DetailWorshipTemplate::where('id_worship_template',$id)->get()->pluck('id_activity_template');
+        $ActivityTemplates=ActivityTemplate::where('status','1');
+        return view('page.place.detail_index',compact('DetailWorshipTemplates','WorshipPlace','ActivityTemplates','arr'));
         //
     }
 
@@ -41,8 +41,22 @@ class DetailWorshipTemplateController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store($id,Request $request)
     {
+        // dd($request->all());
+        $index=0;
+        DetailWorshipTemplate::where('id_worship_template',$id)->delete();
+        foreach ($request->id as $value) {
+            DetailWorshipTemplate::create([
+                'order'=>$index,
+                'id_worship_template'=>$id,
+                'id_activity_template'=>$value,
+                'done'=>$request->done[$index],
+                'default_time'=>$request->default_time[$index],
+            ]);
+            $index+=1;
+        }
+        return redirect('/worship-place/'.$id.'/activity');
         //
     }
 

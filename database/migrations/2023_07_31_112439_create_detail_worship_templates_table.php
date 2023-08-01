@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('order');
             $table->bigInteger('id_worship_template');
             $table->bigInteger('id_activity_template');
+            $table->enum("done",['-1','1'])->comment('before:-1,after:1')->nullable();
             $table->integer('default_time')->nullable();
 
             $table->timestamps();
