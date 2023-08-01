@@ -15,6 +15,39 @@
 @endpush
 @push('js')
     <script>
+        var $time_start = $('#time_start').attr('data-time_start')
+
+        function remakeTime() {
+            let index = $('.playground.sortable-form-group-pre .item-sort').length - 1
+            $time = $time_start
+            for (index; index >= 0; index--) {
+                $el = $('.playground.sortable-form-group-pre .item-sort').eq(index)
+                $time = moment($time, "hh:mm").subtract($el.attr('data-default_time'), 'minutes').format("hh:mm")
+                $el.find('.time').text($time)
+            }
+
+            let last = $('.playground.sortable-form-group-post .item-sort').length
+            $time = $time_start
+            for (let index = 0; index < last; index++) {
+                $el = $('.playground.sortable-form-group-post .item-sort').eq(index)
+                $time = moment($time, "hh:mm").add($el.attr('data-default_time'), 'minutes').format("hh:mm")
+                $el.find('.time').text($time)
+            }
+        }
+
+        $(document).ready(function() {
+            remakeTime()
+        })
+        $(document).on('click', '.edit-default-time', function() {
+            // $(this).parents('.item-sort').attr('data-default_time','').find('.hidden-default_time').val('')
+            $('.modal-input-waktu').val($(this).parents('.item-sort').find('.hidden-default_time').val())
+            $('.save-default-time').attr('data-id', $(this).parents('.item-sort').attr('data-id'))
+        })
+        $(document).on('click', '.save-default-time', function() {
+            $('#activity-' + $(this).attr('data-id')).attr('data-default_time', $('.modal-input-waktu').val()).find('.hidden-default_time').val($('.modal-input-waktu').val())
+            $('.save-default-time').attr('data-id', '')
+            remakeTime()
+        })
         $('#waktu').change(function() {
 
             if (($('#parameter_type').val() != "") && $('#waktu').val() != "" && $('#waktu').val() > 0) {
@@ -41,7 +74,6 @@
             var array = []
             var html_param = ''
             $.each(obj, function(key, value) {
-                console.log(key, value)
                 if (key == "default_time") {
                     array[key] = $('#waktu').val()
                     html_param += ` data-${key}="${$('#waktu').val()}"`
@@ -51,7 +83,7 @@
                 }
             });
             var html = ` 
-            <div class="col-12 mb-2 item-sort" ${html_param}>
+            <div class="col-12 mb-2 item-sort" id="activity-${array['id']}" ${html_param}>
                 <div class="item bg-secondary border rounded d-flex justify-content-between px-3 py-1">
                     <div class="text-white fs-5 d-flex align-items-center">
                         ${array['activity']}
@@ -60,9 +92,12 @@
 
                     </div>
                     <input type="hidden" name="done[]" value="${array['done']}">
-                    <input type="hidden" name="default_time[]" value="${array['default_time']}">
+                    <input type="hidden" name="default_time[]" class="hidden-default_time" value="${array['default_time']}">
                     <input type="hidden" name="id[]" value="${array['id']}">
-                    <button type="button" class="btn btn-primary icon-sortable fs-6 float-end"><i class="bi bi-hand-index-thumb"></i></button>
+                    <div class="float-end">
+                        <button type="button" class="btn btn-warning edit-default-time fs-6" data-bs-toggle="modal" data-bs-target="#editModal"><i class="bi bi-pencil-square"></i></button>
+                        <button type="button" class="btn btn-primary icon-sortable fs-6"><i class="bi bi-hand-index-thumb"></i></button>
+                    </div>
                 </div>
             </div>`
             if (array['done'] == '1') {
@@ -73,7 +108,6 @@
 
 
         })
-        var $time_start = $('#time_start').data('time_start')
         sortable_el = document.querySelectorAll('.sortable-form-group-post');
         if (sortable_el.length > 0) {
             sortable_el.forEach(function(el) {
@@ -85,13 +119,7 @@
                         name: 'shared-post',
                     },
                     onEnd: function( /**Event*/ evt) {
-                        let last = $('.playground.sortable-form-group-post .item-sort').length
-                        $time = $time_start
-                        for (let index = 0; index < last; index++) {
-                            $el = $('.playground.sortable-form-group-post .item-sort').eq(index)
-                            $time = moment($time, "hh:mm").add($el.data('default_time'), 'minutes').format("hh:mm")
-                            $el.find('.time').text($time)
-                        }
+                        remakeTime()
                     },
                 });
             });
@@ -107,14 +135,7 @@
                         name: 'shared-pre',
                     },
                     onEnd: function( /**Event*/ evt) {
-                        let index = $('.playground.sortable-form-group-pre .item-sort').length - 1
-                        $time = $time_start
-                        for (index; index >= 0; index--) {
-                            $el = $('.playground.sortable-form-group-pre .item-sort').eq(index)
-                            $time = moment($time, "hh:mm").subtract($el.data('default_time'), 'minutes').format("hh:mm")
-                            $el.find('.time').text($time)
-                        }
-                        console.log(evt.to)
+                        remakeTime()
                     },
                 });
             });
@@ -196,7 +217,7 @@
                     <div class="row">
                         <div class="container">
                             <div class="row sortable-form-group-pre">
-                                @foreach ($ActivityTmplt[1]->where('done', '-1')->where('default_time', '!=', null)->whereNotIn('id',$arr)->get() as $item)
+                                @foreach ($ActivityTmplt[1]->where('done', '-1')->where('default_time', '!=', null)->whereNotIn('id', $arr)->get() as $item)
                                     @php
                                         $param =
                                             "
@@ -222,7 +243,7 @@
                                             $item->status .
                                             "'";
                                     @endphp
-                                    <div class="col-12 mb-2 item-sort" {!! $param !!}>
+                                    <div class="col-12 mb-2 item-sort" id="activity-{{ $item->id }}" {!! $param !!}>
                                         <div class="item bg-secondary border rounded d-flex justify-content-between px-3 py-1">
                                             <div class="text-white fs-5 d-flex align-items-center">
                                                 {{ $item->activity }}
@@ -230,16 +251,19 @@
                                             <div class="text-white fs-5 d-flex align-items-center time d-none">
                                             </div>
                                             <input type="hidden" name="done[]" value="{{ $item->done }}">
-                                            <input type="hidden" name="default_time[]" value="{{ $item->default_time }}">
+                                            <input type="hidden" name="default_time[]" class="hidden-default_time" value="{{ $item->default_time }}">
                                             <input type="hidden" name="id[]" value="{{ $item->id }}">
-                                            <button type="button" class="btn btn-primary icon-sortable fs-6 float-end"><i class="bi bi-hand-index-thumb"></i></button>
+                                            <div class="float-end">
+                                                <button type="button" class="btn btn-warning edit-default-time fs-6" data-bs-toggle="modal" data-bs-target="#editModal"><i class="bi bi-pencil-square"></i></button>
+                                                <button type="button" class="btn btn-primary icon-sortable fs-6"><i class="bi bi-hand-index-thumb"></i></button>
+                                            </div>
                                         </div>
                                     </div>
                                 @endforeach
                             </div>
                             <hr>
                             <div class="row sortable-form-group-post">
-                                @foreach ($ActivityTmplt[2]->where('done', '1')->where('default_time', '!=', null)->whereNotIn('id',$arr)->get() as $item)
+                                @foreach ($ActivityTmplt[2]->where('done', '1')->where('default_time', '!=', null)->whereNotIn('id', $arr)->get() as $item)
                                     @php
                                         $param =
                                             "
@@ -265,18 +289,21 @@
                                             $item->status .
                                             "'";
                                     @endphp
-                                    <div class="col-12 mb-2 item-sort" {!! $param !!}>
+                                    <div class="col-12 mb-2 item-sort" id="activity-{{ $item->id }}" {!! $param !!}>
                                         <div class="item bg-secondary border rounded d-flex justify-content-between px-3 py-1">
                                             <div class="text-white fs-5 d-flex align-items-center">
                                                 {{ $item->activity }}
                                             </div>
-                                            <div class="text-white fs-5 d-flex align-items-center time">
+                                            <div class="text-white fs-5 d-flex align-items-center time d-none">
 
                                             </div>
                                             <input type="hidden" name="done[]" value="{{ $item->done }}">
-                                            <input type="hidden" name="default_time[]" value="{{ $item->default_time }}">
+                                            <input type="hidden" name="default_time[]" class="hidden-default_time" value="{{ $item->default_time }}">
                                             <input type="hidden" name="id[]" value="{{ $item->id }}">
-                                            <button type="button" class="btn btn-primary icon-sortable fs-6 float-end"><i class="bi bi-hand-index-thumb"></i></button>
+                                            <div class="float-end">
+                                                <button type="button" class="btn btn-warning edit-default-time fs-6" data-bs-toggle="modal" data-bs-target="#editModal"><i class="bi bi-pencil-square"></i></button>
+                                                <button type="button" class="btn btn-primary icon-sortable fs-6"><i class="bi bi-hand-index-thumb"></i></button>
+                                            </div>
                                         </div>
                                     </div>
                                 @endforeach
@@ -305,16 +332,16 @@
                                         $item->linkActivityTemplate->activity .
                                         "' 
                                         data-id='" .
-                                        $item->linkActivityTemplate->id .
+                                        $item->id_activity_template .
                                         "' 
                                         data-value='" .
                                         $item->linkActivityTemplate->value .
                                         "' 
                                         data-default_time='" .
-                                        $item->linkActivityTemplate->default_time .
+                                        $item->default_time .
                                         "' 
                                         data-done='" .
-                                        $item->linkActivityTemplate->done .
+                                        $item->done .
                                         "' 
                                         data-type='" .
                                         $item->linkActivityTemplate->type .
@@ -323,18 +350,21 @@
                                         $item->linkActivityTemplate->status .
                                         "'";
                                 @endphp
-                                <div class="col-12 mb-2 item-sort" {!! $param !!}>
+                                <div class="col-12 mb-2 item-sort" id="activity-{{ $item->id_activity_template }}" {!! $param !!}>
                                     <div class="item bg-secondary border rounded d-flex justify-content-between px-3 py-1">
                                         <div class="text-white fs-5 d-flex align-items-center">
                                             {{ $item->linkActivityTemplate->activity }}
                                         </div>
-                                        <div class="text-white fs-5 d-flex align-items-center time">
+                                        <div class="text-white fs-5 d-flex align-items-center time d-none">
 
                                         </div>
-                                        <input type="hidden" name="done[]" value="{{ $item->linkActivityTemplate->done }}">
-                                        <input type="hidden" name="default_time[]" value="{{ $item->linkActivityTemplate->default_time }}">
-                                        <input type="hidden" name="id[]" value="{{ $item->linkActivityTemplate->id }}">
-                                        <button type="button" class="btn btn-primary icon-sortable fs-6 float-end"><i class="bi bi-hand-index-thumb"></i></button>
+                                        <input type="hidden" name="done[]" value="{{ $item->done }}">
+                                        <input type="hidden" name="default_time[]" class="hidden-default_time" value="{{ $item->default_time }}">
+                                        <input type="hidden" name="id[]" value="{{ $item->id_activity_template }}">
+                                        <div class="float-end">
+                                            <button type="button" class="btn btn-warning edit-default-time fs-6" data-bs-toggle="modal" data-bs-target="#editModal"><i class="bi bi-pencil-square"></i></button>
+                                            <button type="button" class="btn btn-primary icon-sortable fs-6"><i class="bi bi-hand-index-thumb"></i></button>
+                                        </div>
                                     </div>
                                 </div>
                             @endforeach
@@ -354,16 +384,16 @@
                                         $item->linkActivityTemplate->activity .
                                         "' 
                                     data-id='" .
-                                        $item->linkActivityTemplate->id .
+                                        $item->id_activity_template .
                                         "' 
                                     data-value='" .
                                         $item->linkActivityTemplate->value .
                                         "' 
                                     data-default_time='" .
-                                        $item->linkActivityTemplate->default_time .
+                                        $item->default_time .
                                         "' 
                                     data-done='" .
-                                        $item->linkActivityTemplate->done .
+                                        $item->done .
                                         "' 
                                     data-type='" .
                                         $item->linkActivityTemplate->type .
@@ -372,24 +402,46 @@
                                         $item->linkActivityTemplate->status .
                                         "'";
                                 @endphp
-                                <div class="col-12 mb-2 item-sort" {!! $param !!}>
+                                <div class="col-12 mb-2 item-sort" id="activity-{{ $item->id_activity_template }}" {!! $param !!}>
                                     <div class="item bg-secondary border rounded d-flex justify-content-between px-3 py-1">
                                         <div class="text-white fs-5 d-flex align-items-center">
                                             {{ $item->linkActivityTemplate->activity }}
                                         </div>
-                                        <div class="text-white fs-5 d-flex align-items-center time">
+                                        <div class="text-white fs-5 d-flex align-items-center time d-none">
 
                                         </div>
-                                        <input type="hidden" name="done[]" value="{{ $item->linkActivityTemplate->done }}">
-                                        <input type="hidden" name="default_time[]" value="{{ $item->linkActivityTemplate->default_time }}">
-                                        <input type="hidden" name="id[]" value="{{ $item->linkActivityTemplate->id }}">
-                                        <button type="button" class="btn btn-primary icon-sortable fs-6 float-end"><i class="bi bi-hand-index-thumb"></i></button>
+                                        <input type="hidden" name="done[]" value="{{ $item->done }}">
+                                        <input type="hidden" name="default_time[]" class="hidden-default_time" value="{{ $item->default_time }}">
+                                        <input type="hidden" name="id[]" value="{{ $item->id_activity_template }}">
+                                        <div class="float-end">
+                                            <button type="button" class="btn btn-warning edit-default-time fs-6" data-bs-toggle="modal" data-bs-target="#editModal"><i class="bi bi-pencil-square"></i></button>
+                                            <button type="button" class="btn btn-primary icon-sortable fs-6"><i class="bi bi-hand-index-thumb"></i></button>
+                                        </div>
                                     </div>
                                 </div>
                             @endforeach
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3 col-6">
+                        <label for="waktu" class="form-label">waktu</label>
+                        <input type="number" name="waktu" value="0" class="form-control modal-input-waktu">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary save-default-time" data-bs-dismiss="modal">Save changes</button>
+                </div>
             </div>
         </div>
     </div>
